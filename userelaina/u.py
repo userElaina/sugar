@@ -1,37 +1,33 @@
 '''
-`urlencode` `urldecode` `ua`
+`rd` `urlencode` `urldecode` `ua`
 
 `ua_my` `ua_fake`
 
 	>>> import re
 	>>> import time
 	>>> import requests
-	>>> from random import choice as rd
+	>>> from typing import Union
 	>>> from time import sleep as slp
+	>>> from copy import deepcopy as dcp
 
-	>>> urlencode(s:str)->str
-	>>> urldecode(s:str)->str
-	>>> ua(k='all')->str
+	>>> rd(x:all)->all
+	>>> urlencode(s:all)->str
+	>>> urldecode(s:all)->str
+	>>> ua(k:str)->str
 '''
 
 import re
 import time
 import requests
-from random import choice as rd
+from typing import Union
 from time import sleep as slp
+from copy import deepcopy as dcp
 
+from userelaina._small import rd
 from userelaina._other import urlencode,urldecode
 
-def ua(k:str='all')->str:
-	return rd(ua_fake[rd(ua_fake) if k=='all' else k])
-
-ua_my={
-	'edge':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36 Edg/91.0.864.48',
-	'chrome':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36',
-	'ie':'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; Touch; rv:11.0) like Gecko',
-	'firefox':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
-	'tor':'Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0', # firefox old version
-}
+def ua(k:str=None)->str:
+	return rd(ua_fake.get(k,ua_fake[rd(ua_fake)]))
 
 ua_fake={
 	"chrome": [

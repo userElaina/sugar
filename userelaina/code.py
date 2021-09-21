@@ -1,18 +1,26 @@
 '''
-`b` `int` `url` `uni`
+`bencode` `urlencode` `urldecode` `uniencode` `unidecode`
 
-`hash` `hash_len`
+`Hash` `hashencode` `hashdecode`
 
-	>>> bencode(s:str)->bytes
-	>>> bdecode(s:str,p=('',False,))->bytes
-	>>> intencode(s:all)->int
-	>>> intdecode(s:int)->bytes
+`ahash` `dhash` `phash` `hm`
 
-	>>> hash_len={str:int}
-	>>> hashencode(s:all,api:str,need_size=128,block_size=0,types:str)->Union[bytes,str]
-	>>> hashdecode(s:all,api:str,block_size:=0,types:str)->Union[bytes,str]
+	>>> bencode(s:all)->bytes
+	>>> urlencode(s:all)->str
+	>>> urldecode(s:all)->str
+	>>> uniencode(s:str)->str
+	>>> unidecode(s:str)->str
+
+	>>> Hash(api:str,mem=1<<25)
+	>>> hashencode(s:all,api:str,isfile=False,size:int=None,types=bytes)->Union[bytes,str,int]
+	>>> hashdecode(s:all,api:str,isfile=False,size:int=None,types=bytes)->Union[bytes,str]
+
+	>>> ahash(pth:str)->int
+	>>> dhash(pth:str)->int
+	>>> phash(pth:str)->int
+	>>> hm(h1:int,h2:int)->int
 '''
 
-from userelaina._basic import bencode,bdecode,intencode,intdecode
-from userelaina._other import urlencode,urldecode,uniencode,unidecode
-from userelaina._hash import hashencode,hashdecode,hash_len
+from userelaina._other import bencode,urlencode,urldecode,uniencode,unidecode
+from userelaina._hash import Hash,hashencode,hashdecode
+from userelaina._pic import ahash,dhash,phash,hm
