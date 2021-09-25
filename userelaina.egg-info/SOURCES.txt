@@ -2,10 +2,10 @@ LICENSE
 README.rst
 setup.py
 userelaina/__init__.py
+userelaina/_archive.py
 userelaina/_hash.py
 userelaina/_log.py
 userelaina/_ls.py
-userelaina/_old.py
 userelaina/_op.py
 userelaina/_other.py
 userelaina/_pic.py

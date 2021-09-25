@@ -3,7 +3,7 @@ import json
 import string
 from typing import Union
 
-from userelaina._old import Old
+from userelaina._archive import Archive
 from copy import deepcopy as dcp
 
 _Default=__name__+'._Default'
@@ -64,8 +64,7 @@ class Op:
 			sort_keys=sort_keys,
 		)
 		if save_old:
-			Old().ck(pth)
-		open(pth,'wb').write(x)
+			Archive().new(pth,x)
 		return x
 
 	def dec(

@@ -1,5 +1,6 @@
-import threading
+import os
 import time
+import threading
 
 def throws(f,args:tuple=tuple())->None:
 	if not f:
@@ -24,7 +25,7 @@ def throws(f,args:tuple=tuple())->None:
 class nThread:
 	def __init__(
 		self,
-		n:int=16,
+		n:int=None,
 		clk:float=0,
 		f=None,
 	):
@@ -32,7 +33,7 @@ class nThread:
 		self.__pause=False
 		self.__q=list()
 		
-		self.__n=n
+		self.__n=n if isinstance(n,int) else os.cpu_count()
 		self.__total=0
 		self.__finish=0
 		
@@ -107,7 +108,7 @@ class nThread:
 		self.__ed=False
 
 def throws_ex(
-	n:int=16,
+	n:int=None,
 	clk:float=0,
 	f=None,
 	l:list=list(),

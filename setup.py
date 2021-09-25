@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='userelaina',
-    version='0.0.2',
+    version='0.0.3',
     description='Syntax sugar.',
     long_description=open(os.path.join(os.path.abspath(os.path.dirname(__file__)),'README.rst')).read(),
     py_modules=['userelaina'],
