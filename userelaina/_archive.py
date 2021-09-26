@@ -18,6 +18,8 @@ class Archive:
 		self.settable(table)
 
 		self.ck=self.check
+		self.save=self.check
+		self.sv=self.check
 		self.mv=self.move
 
 	def setbase(self,base:int):

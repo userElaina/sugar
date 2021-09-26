@@ -63,13 +63,13 @@ class Hash:
 			self.mem1=mem>>1
 
 		if api=='adler32':
-			self._prev=1
-			self._f=zlib.adler32
+			self.__prev=1
+			self.__f=zlib.adler32
 		elif api=='crc32':
-			self._prev=0
-			self._f=zlib.crc32
+			self.__prev=0
+			self.__f=zlib.crc32
 		else:
-			self._prev=hashlib.new(api,b'')
+			self.__prev=hashlib.new(api,b'')
 
 		self.mem1=mem>>1
 		self.block_size=hash_block[api]
@@ -79,12 +79,12 @@ class Hash:
 
 	def digest(self,size:int=None)->bytes:
 		if self.api in ('shake_128','shake_256'):
-			return self._prev.digest(size if isinstance(size,int) else 128)
+			return self.__prev.digest(size if isinstance(size,int) else 128)
 		
 		if self.api in ('adler32','crc32'):
-			ans=(self._prev&0xffffffff).to_bytes(4,'little')
+			ans=(self.__prev&0xffffffff).to_bytes(4,'little')
 		else:
-			ans=self._prev.digest()
+			ans=self.__prev.digest()
 
 		if not isinstance(size,int):
 			return ans
@@ -98,9 +98,9 @@ class Hash:
 
 	def update(self,b:bytes):
 		if self.api in ('adler32','crc32'):
-			self._prev=self._f(b,self._prev)
+			self.__prev=self.__f(b,self.__prev)
 		else:
-			self._prev.update(b)
+			self.__prev.update(b)
 
 	def updatefile(self,pth:str)->bytes:
 		with open(pth,'rb') as f:

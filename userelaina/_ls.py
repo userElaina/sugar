@@ -6,6 +6,7 @@ from userelaina._small import rd
 
 exts={
 	'':[''],
+	'archive':['archive'],	
 	'qwq':['qwq','qwq1','qwq2','qwq3','qwq4','bmp'],
 	'pic':['png','jpg','jpeg','bmp','tif','tiff','gif',],
 	'gif':['gif'],
@@ -29,18 +30,24 @@ exts['cpp']=exts['c']
 exts['python']=exts['py']
 exts['codes']=exts['c']+exts['java']+exts['py']+exts['othercodes']+exts['data']
 exts['text']=exts['codes']+exts['txt']+exts['html']
+def ext(k:str)->list():
+	if k.startswith('*.'):
+		return [k[2:],]
+	return exts.get(k,list())
 
+_white='\x1b[0m'
 colors={
 	'red':'\x1b[31m',
 	'green':'\x1b[32m',
 	'yellow':'\x1b[33m',
 	'blue':'\x1b[34m',
-	'purple':'\x1b[35m',
+	'magenta':'\x1b[35m',
 	'cyan':'\x1b[36m',
 }
 def col2str(col:str='default')->str:
+	col=str2col(col)
 	if col in ('default',0,None,'None'):
-		return '\x1b[0m'
+		return _white
 	if col=='random':
 		return rd(colors.values())
 	if col in colors:
@@ -48,29 +55,24 @@ def col2str(col:str='default')->str:
 	raise ValueError('Unsupported color!')
 
 color_name={
-	'default':'default',
-	'random':'random',
-
-	'suiji':'random',
-	'sj':'random',
-	'moren':'default',
-	'mr':'default',
-	'hong':'red',
-	'lv':'green',
-	'huang':'yellow',
-	'lan':'blue',
-	'zi':'putple',
-	'qing':'cyan',
-
-	'dft':'default',
-	'yl':'yellow',
-	'pp':'purple',
-	'ppl':'purple'
+	'default':['moren','mr','default','dft'],
+	'random':['suiji','sj','random','rd'],
+	'red':['hong'],
+	'green':['lv'],
+	'yellow':['huang',],
+	'blue':['lan'],
+	'magenta':['zi','purple','p','pinhong','ph','fuchsia','yanghong','yh'],
+	'cyan':['qing','ding'],
 }
 for i in colors:
-	color_name[i]=i
-	color_name[i[0]]=i
-	color_name[i[:2]]=i
+	color_name[i]+=[i,i[0],i[:2]]
+
+def str2col(s:str)->str:
+	for i in color_name:
+		if s in i:
+			return i
+	return None
+
 
 def get_ext(s:str)->str:
 	_base=os.path.basename(s)
@@ -78,94 +80,150 @@ def get_ext(s:str)->str:
 fill=lambda s,l:' '*(l-len(str(s)))+str(s)
 
 class Ls:
-	def __init__(
-		self,
-		pth:str='./',
-		l:list=list(),
-	):
-		self.pth=os.path.abspath('./')
+	def __init__(self,pth:str='./',):
+		self.pth='./'
 		self.cd(pth)
-		_paint=dict()
+
+		self.__n=0
+		self.col=dict()
 		self.__col_class=dict()
 		self.__col_can_use=set(colors)
-		self.chosen=list()
-		self.reg=list()
 
-		for i in l:
-			if isinstance(i,str):
-				self.paint(i)
-			else:
-				self.paint(i[0],i[1])
+		self.cho=list()
+		self.reg=list()
+		self.regtag='None'
 
 	def cd(self,pth:str):
 		if isinstance(pth,int):
-			pth=self.get_clip(pth+2)
-		_ans=os.path.abspath(os.path.join(self.pth,pth))
-		self.pth=_ans if os.path.isdir(_ans) else os.path.dirname(_ans)
+			try:
+				pth=self.getreg('dir')[pth]
+			except:
+				return 1
+		else:
+			pth=os.path.abspath(os.path.join(self.pth,pth))
+		if not os.path.exists(pth):
+			return 1
+		pth=pth if os.path.isdir(pth) else os.path.dirname(pth)
+		if pth==self.pth:
+			return 0
+		self.pth=pth
+
 		self.dir=list()
 		self.file=list()
 		for i in os.listdir(self.pth):
 			_full=os.path.join(self.pth,i)
 			if os.path.isdir(_full):
-				self.dir.append(i)
+				self.dir.append(_full)
 			elif os.path.isfile(_full):
-				self.file.append(i)
+				self.file.append(_full)
+		self.regtag='None'
 
-	def setcolor(self,x:str,y:str=None)->int:
-		if x not in exts:
+	def setcolor(self,k:str,y:str=None)->int:
+		k=ext(k)
+		if not k:
 			return 1
-		self.__col_class[x]=color_name.get(y,'random')
-		if len(self.__col_can_use)>1:
+		
+		y=str2col(y)
+		if not y:
+			y=self.__n
+			self.__n+=1
+		for i in k:
+			self.col[i]=y
+		if len(self.__col_can_use)>1 and y in self.__col_can_use:
 			self.__col_can_use.discard(y)
 		return 0
 
 	def pwd(self)->str:
 		return self.pth
 
-	def explorer(self):
-		return os.system('explorer "'+self.pth+'"')
+	def explorer(self,pth:str=None):
+		if isinstance(pth,str):
+			x='explorer "'+os.path.abspath(os.path.join(self.pth,pth))+'"'
+		elif isinstance(pth,int):
+			x='explorer "'+self.reg[pth]+'"'
+		else:
+			x='explorer "'+self.pth+'"'
+		os.system(x)
+		return x
 
-	def setreg(self,k:str='file'):
-		if k is None:
-			return self.reg
+	def setcho(self,k:str=None,l:int=None,r:int=None)->int:
+		self.cho=self.getreg(k,l,r)
+		return len(self.cho)
 
-		_paint=dict()
-		for i in self.__col_class:
-			co=rd(self.__col_can_use) if self.__col_class[i]=='random' else self.__col_class[i]
-			if i.startswith('.'):
-				_paint[i[1:]]=co
-			_paint.update({j:co for j in exts[i]})
+	def addcho(self,k:str=None,l:int=None,r:int=None)->int:
+		_l=[i for i in self.getreg(k,l,r) if i not in self.cho]
+		self.cho+=_l
+		if self.regtag=='chosen':
+			self.regtag='None'
+		return len(_l)
+
+	def uncho(self,k:str=None,l:int=None,r:int=None)->int:
+		self.getreg('chosen')
+		_d=self.getreg(k,l,r)
+		self.cho=[i for i in self.cho if i not in _d]
+		if self.regtag=='chosen':
+			self.regtag='None'
+		return len(_d)
+
+	def getcho(self,l:int=None,r:int=None)->Union[str,list]:
+		return self.getreg('chosen',l,r)
+
+	def lencho(self)->int:
+		return len(self.cho)
+
+	def setreg(self,k:str='file')->int:
+		if k is None or k==self.regtag:
+			return len(self.reg)
 
 		if k=='dir':
-			self.reg=[(i,'default') for i in self.dir]
+			self.reg=dcp(self.dir)
 
-		if k=='file':
-			self.reg=[(i,_paint.get(get_ext(i),'default')) for i in self.file]
-		if k=='ans':
-			self.reg=[(i,_paint.get(get_ext(i),'default')) for i in self.file if get_ext(i) in _paint]
-		if k in exts:
-			self.reg=[(i,_paint.get(get_ext(i),'default')) for i in self.file if get_ext(i) in exts[k]]
-		if k.startswith('.'):
-			k=k[1:]
-			_c=_paint.get(k,'default')
-			self.reg=[(i,_c) for i in self.file if get_ext(i)==k]
-		return self.reg
+		elif k=='file':
+			self.reg=dcp(self.file)
+		elif k=='ans':
+			self.reg=[i for i in self.file if get_ext(i) in self.col]
+		elif k=='chosen':
+			self.reg=dcp(self.cho)
+		elif k in exts:
+			self.reg=[i for i in self.file if get_ext(i) in exts[k]]
+		elif k.startswith('*.'):
+			k=k[2:]
+			self.reg=[i for i in self.file if get_ext(i)==k]
+		else:
+			return len(self.reg)
+		self.regtag=k
+		return len(self.reg)
+
+	def fxxkreg(self,reg:list,regtag:str):
+		'WARNING: This is a dangerous behavior!'
+		if reg is not None:
+			self.reg=reg
+		self.regtag=regtag
 
 	def getreg(self,k:str=None,l:int=None,r:int=None)->Union[str,list]:
-		_d=[os.path.join(self.pth,i[0]) for i in self.setreg(k)]
-		if l==None and r==None:
-			return _d[k]
-		if l==None:
-			return _d[k][r]
-		if r==None:
-			return _d[k][l]
-		return _d[k][l:r]
+		if isinstance(k,int):
+			k,l,r=None,k,l
+		self.setreg(k)
+		if l is None:
+			if r is None:
+				return dcp(self.reg)
+			else:
+				return self.reg[r]
+		else:
+			if r is None:
+				return self.reg[l]
+			else:
+				return self.reg[l:r]
+		return dcp(self.reg)
+	
+	def getregtag(self):
+		return self.regtag
 
 	def showreg(self,k:str='file',fullpath:bool=False,num:bool=True)->str:
-		_d=self.setreg(k)
+		_d=self.getreg(k)
 		_filllen=max(len(str(len(_d))),2 if k=='dir' else 1)
 		s=col2str()+k+'('+str(len(_d))
-		if k not in ('file','dir'):
+		if k in exts or k.startswith('*.') or k in ('ans'):
 			s+='/'+str(len(self.file))
 		s+='):\n'
 
@@ -182,25 +240,33 @@ class Ls:
 
 			for i in enumerate(_d):
 				s+=(fill(i[0],_filllen)+' ') if num else ''
-				p=os.path.join(i[1][0],'')
-				s+=os.path.join(self.pth,p) if fullpath else p
+				s+=os.path.join(i[1] if fullpath else os.path.basename(i[1]),'')
 				s+='\n'
 			s+=col2str()
 			return s
 
 		s+=col2str()
+		_cc=dict()
+		_ca=list(self.__col_can_use)
 		for i in enumerate(_d):
 			s+=(fill(i[0],_filllen)+' ') if num else ''
-			s+=col2str(i[1][1])
-			s+=os.path.join(self.pth,i[1][0]) if fullpath else i[1][0]
+
+			_c=self.col.get(get_ext(i[1]),'default')
+			if isinstance(_c,int):
+				if _c not in _cc:
+					_cc[_c]=rd(_ca)
+					if len(_ca)>1:
+						_ca.remove(_cc[_c])
+				_c=_cc[_c]
+
+			s+=col2str(_c)
+			s+=os.path.join(self.pth,i[1]) if fullpath else i[1]
 			s+='\n'+col2str()
 		return s
 
 	def show(self,fullpath:bool=False,num:bool=True):
 		print(col2str())
-		print(colors['green']+self.pth+'# ')
+		print(col2str('green')+self.pth+'# ')
 		print(col2str())
 		print(self.showreg(k='dir',fullpath=fullpath,num=num))
-		print(self.showreg(fullpath=fullpath,num=num))
-		print(col2str())
-
+		print(self.showreg(k='file',fullpath=fullpath,num=num))

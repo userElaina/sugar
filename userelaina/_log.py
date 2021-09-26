@@ -6,20 +6,20 @@ from userelaina._archive import Archive
 class Log:
 	def __init__(
 		self,
-		pth:str='debug.log',
-		err:str='error.log',
+		out:str='debug.log',
+		err:str=None,
+		name:str='Log',
 	):
-		# DEBUG INFO WARNING ERROR CRITICAL
-		self.__logger=logging.getLogger('Log')
+		# NOTSET DEBUG INFO WARNING ERROR CRITICAL
+		self.__logger=logging.getLogger(name)
 		self.__logger.setLevel(logging.DEBUG)
-		formatter=logging.Formatter("%(asctime)s %(message)s")
 
-		if pth:
-			self.__pth=os.path.abspath(pth)
-			Archive().new(self.__pth)
-			handler_lg=logging.FileHandler(filename=self.__pth,encoding='utf-8')
+		if out:
+			self.out=os.path.abspath(out)
+			Archive().new(self.out)
+			handler_lg=logging.FileHandler(filename=self.out,encoding='utf-8')
 			handler_lg.setLevel(logging.DEBUG)
-			handler_lg.setFormatter(formatter)
+			handler_lg.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
 			self.__logger.addHandler(handler_lg)
 
 		handler_pt=logging.StreamHandler()
@@ -28,11 +28,11 @@ class Log:
 		self.__logger.addHandler(handler_pt)
 
 		if err:
-			self.__err=os.path.abspath(err)
-			Archive().new(self.__pth)
-			handler_er=logging.FileHandler(filename=self.__err,encoding='utf-8')
+			self.err=os.path.abspath(err)
+			Archive().new(self.err)
+			handler_er=logging.FileHandler(filename=self.err,encoding='utf-8')
 			handler_er.setLevel(logging.ERROR)
-			handler_er.setFormatter(formatter)
+			handler_er.setFormatter(logging.Formatter("%(asctime)s %(message)s"))
 			self.__logger.addHandler(handler_er)
 
 	def lg(self,s:str):
@@ -47,5 +47,3 @@ class Log:
 		s=str(s)
 		self.__logger.error(s)
 
-	def ptr(self,s:all):
-		pt(repr(s))

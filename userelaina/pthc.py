@@ -50,9 +50,11 @@
 	>>> Old(base=10,le=3,lstr='.',rstr='.achieve',table:str)
 	>>> Ls(pth='./',l=list())
 	>>> Log(pth='debug.log',erpth='error.log')
+
+	>>> col2str(col='default')->str
 '''
 
 from userelaina._op import Op
 from userelaina._archive import Archive
-from userelaina._ls import exts,Ls
+from userelaina._ls import exts,col2str,Ls
 from userelaina._log import Log
