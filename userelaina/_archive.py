@@ -21,6 +21,7 @@ class Archive:
 		self.save=self.check
 		self.sv=self.check
 		self.mv=self.move
+		self.preopen=self.new
 
 	def setbase(self,base:int):
 		try:

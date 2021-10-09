@@ -5,7 +5,7 @@ r=lambda x:open(os.path.join(os.path.abspath(os.path.dirname(__file__)),x),'rb')
 
 setuptools.setup(
     name='userelaina',
-    version='0.0.3',
+    version='0.0.4',
     description='Syntax sugar.',
     long_description=r('README.rst'),
     py_modules=['userelaina'],
@@ -24,7 +24,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
     ],
     project_urls={
-        "Source": "https://github.com/userelaina/sugar",
+        "Source": "https://github.com/userElaina/sugar",
     },
     keywords='userelaina',
     python_requires='>=3.6',

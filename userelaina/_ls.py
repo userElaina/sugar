@@ -69,7 +69,7 @@ for i in colors:
 
 def str2col(s:str)->str:
 	for i in color_name:
-		if s in i:
+		if s in color_name[i]:
 			return i
 	return None
 
@@ -93,7 +93,7 @@ class Ls:
 		self.reg=list()
 		self.regtag='None'
 
-	def cd(self,pth:str):
+	def join(self,pth:str)->str:
 		if isinstance(pth,int):
 			try:
 				pth=self.getreg('dir')[pth]
@@ -101,9 +101,20 @@ class Ls:
 				return 1
 		else:
 			pth=os.path.abspath(os.path.join(self.pth,pth))
+		return pth
+
+	def precd(self,pth:str)->str:
+		pth=self.join(pth)
+		if isinstance(pth,int):
+			return 1
 		if not os.path.exists(pth):
 			return 1
-		pth=pth if os.path.isdir(pth) else os.path.dirname(pth)
+		return pth if os.path.isdir(pth) else os.path.dirname(pth)
+
+	def cd(self,pth:str):
+		pth=self.precd(pth)
+		if isinstance(pth,int):
+			return 1
 		if pth==self.pth:
 			return 0
 		self.pth=pth
@@ -137,13 +148,8 @@ class Ls:
 		return self.pth
 
 	def explorer(self,pth:str=None):
-		if isinstance(pth,str):
-			x='explorer "'+os.path.abspath(os.path.join(self.pth,pth))+'"'
-		elif isinstance(pth,int):
-			x='explorer "'+self.reg[pth]+'"'
-		else:
-			x='explorer "'+self.pth+'"'
-		os.system(x)
+		x=self.precd(pth)
+		os.system('explorer "'+x+'"')
 		return x
 
 	def setcho(self,k:str=None,l:int=None,r:int=None)->int:
@@ -151,25 +157,51 @@ class Ls:
 		return len(self.cho)
 
 	def addcho(self,k:str=None,l:int=None,r:int=None)->int:
-		_l=[i for i in self.getreg(k,l,r) if i not in self.cho]
+		if isinstance(k,(list,set,tuple)):
+			_l=list(k)
+		else:
+			_l=self.getreg(k,l,r)
+		_l=[i for i in _l if i not in self.cho]
 		self.cho+=_l
-		if self.regtag=='chosen':
+		if self.regtag=='chosen' and _l:
 			self.regtag='None'
 		return len(_l)
 
 	def uncho(self,k:str=None,l:int=None,r:int=None)->int:
-		self.getreg('chosen')
-		_d=self.getreg(k,l,r)
-		self.cho=[i for i in self.cho if i not in _d]
-		if self.regtag=='chosen':
+		if isinstance(k,(list,set,tuple)):
+			_l=list(k)
+		else:
+			self.getreg('chosen')
+			_l=self.getreg(k,l,r)
+		self.cho=[i for i in self.cho if i not in _l]
+		if self.regtag=='chosen' and _l:
 			self.regtag='None'
-		return len(_d)
+		return len(_l)
+	
+	def delcho(self,k:str=None)->int:
+		if k is None:
+			_d=len(self.cho)
+			self.cho=list()
+		else:
+			_d=0
+			while k in self.cho:
+				_d+=1
+				self.cho.remove(k)
+		if self.regtag=='chosen' and _d:
+			self.regtag='None'
+		return _d
+
+	def lencho(self)->int:
+		return len(self.cho)
 
 	def getcho(self,l:int=None,r:int=None)->Union[str,list]:
 		return self.getreg('chosen',l,r)
 
-	def lencho(self)->int:
-		return len(self.cho)
+	def findcho(self,x:str)->int:
+		try:
+			return self.cho.index(x)
+		except:
+			return -1
 
 	def setreg(self,k:str='file')->int:
 		if k is None or k==self.regtag:
@@ -208,10 +240,16 @@ class Ls:
 			if r is None:
 				return dcp(self.reg)
 			else:
-				return self.reg[r]
+				try:
+					return self.reg[r]
+				except:
+					return None
 		else:
 			if r is None:
-				return self.reg[l]
+				try:
+					return self.reg[l]
+				except:
+					return None
 			else:
 				return self.reg[l:r]
 		return dcp(self.reg)
@@ -260,7 +298,7 @@ class Ls:
 				_c=_cc[_c]
 
 			s+=col2str(_c)
-			s+=os.path.join(self.pth,i[1]) if fullpath else i[1]
+			s+=i[1] if fullpath else os.path.basename(i[1])
 			s+='\n'+col2str()
 		return s
 
