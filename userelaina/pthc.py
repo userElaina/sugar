@@ -1,5 +1,7 @@
 '''
-`Op` `Old` `Ls` `Log`
+`Op` `Archive` `Ls`
+
+`col2str` `fastlog`
 
 	>>> Op.enc(
 			x:all,
@@ -47,14 +49,14 @@
 			save_old=False,
 		)->None
 
-	>>> Old(base=10,le=3,lstr='.',rstr='.achieve',table:str)
-	>>> Ls(pth='./',l=list())
-	>>> Log(pth='debug.log',erpth='error.log')
+	>>> Archive(base=10,le=3,lstr='.',rstr='.archive',table:str)
+	>>> Ls(pth='./')
 
 	>>> col2str(col='default')->str
+	>>> fastlog(name='Log',level='warn',out='debug.log',err:str)->logger
 '''
 
 from userelaina._op import Op
 from userelaina._archive import Archive
 from userelaina._ls import exts,col2str,Ls
-from userelaina._log import Log
+from userelaina._log import fastlog
