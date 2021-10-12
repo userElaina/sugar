@@ -18,8 +18,8 @@ class Archive:
 		self.settable(table)
 
 		self.ck=self.check
-		self.save=self.check
-		self.sv=self.check
+		self.save=self.archive
+		self.sv=self.archive
 		self.mv=self.move
 		self.preopen=self.new
 
@@ -64,7 +64,7 @@ class Archive:
 			x=x//k
 		return b
 
-	def __save_old(self,pth:str,)->str:
+	def archive(self,pth:str,)->str:
 		if not os.path.exists(pth):
 			return 0
 		for i in range(self.mx):
@@ -72,7 +72,7 @@ class Archive:
 			if not os.path.exists(pth2):
 				os.rename(pth,pth2)
 				return pth2
-		return -1
+		raise RuntimeError(__name__+'.'+self.__class__.__name__+': Too many "'+pth+'"s!')
 
 	def mkdir(self,pth:str)->int:
 		pth=os.path.abspath(pth)
@@ -81,14 +81,10 @@ class Archive:
 		os.makedirs(pth,exist_ok=True)
 		return 0
 
-	def check(self,pth:str,save_old:bool=True)->int:
+	def check(self,pth:str,save_old:bool=True)->str:
 		pth=os.path.abspath(pth)
-		ans=self.mkdir(os.path.dirname(pth))
-		if save_old:
-			s=self.__save_old(pth)
-			if s==1:
-				raise RuntimeError(__name__+'.'+self.__class__.__name__+': Too many "'+pth+'"s!')
-		return ans
+		self.mkdir(os.path.dirname(pth))
+		return self.archive(pth) if save_old else 1
 	
 	def new(self,pth:str,save_old:bool=True,b:bytes=b'')->int:
 		self.check(pth,save_old=save_old)
