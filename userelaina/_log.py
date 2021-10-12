@@ -22,7 +22,7 @@ def fastlog(name:str='Log',level:str='warn',out:str='debug.log',err:str=None,):
 		__logger.setLevel(logging.DEBUG)
 
 		if out:
-			Archive().new(out,b=b'----'+name.encode('utf8')+'.'+'DEBUG----')
+			Archive().new(out,b=b'----'+name.encode('utf8')+b'.DEBUG----\n')
 			handler_lg=logging.FileHandler(filename=out,encoding='utf8')
 			handler_lg.setLevel(logging.DEBUG)
 			handler_lg.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
@@ -35,7 +35,7 @@ def fastlog(name:str='Log',level:str='warn',out:str='debug.log',err:str=None,):
 			__logger.addHandler(handler_pt)
 
 		if err:
-			Archive().new(err,b=b'----'+name.encode('utf8')+'.'+'ERROR----')
+			Archive().new(err,b=b'----'+name.encode('utf8')+b'.ERROR----\n')
 			handler_er=logging.FileHandler(filename=err,encoding='utf8')
 			handler_er.setLevel(logging.ERROR)
 			handler_er.setFormatter(logging.Formatter("%(asctime)s %(message)s"))
