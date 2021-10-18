@@ -48,7 +48,7 @@ class Archive:
 
     def setlstr(self,lstr:str)->None:
         self.l=lstr
-    
+
     def setrstr(self,rstr:str)->None:
         self.r=rstr
 
@@ -85,7 +85,7 @@ class Archive:
         pth=os.path.abspath(pth)
         self.mkdir(os.path.dirname(pth))
         return self.archive(pth) if save_old else 1
-    
+
     def new(self,pth:str,save_old:bool=True,b:bytes=b'')->int:
         self.check(pth,save_old=save_old)
         open(pth,'wb').write(b)
