@@ -14,7 +14,7 @@ _log_level={
     'all':logging.DEBUG,
 }
 
-def fastlog(name:str='Log',level:str='warn',out:str='debug.log',err:str=None,):
+def fastlog(name:str='Log',level:str='warn',out:str='debug.log',err:str=None,save_old:bool=True):
         level=level.lower()
 
         # NOTSET DEBUG INFO WARNING ERROR CRITICAL
@@ -25,7 +25,7 @@ def fastlog(name:str='Log',level:str='warn',out:str='debug.log',err:str=None,):
             __logger.removeHandler(__logger.handlers[0])
 
         if out:
-            Archive().new(out,b=b'----'+name.encode('utf8')+b'.DEBUG----\n')
+            Archive().new(out,b=b'----'+name.encode('utf8')+b'.DEBUG----\n',save_old=save_old)
             handler_lg=logging.FileHandler(filename=out,encoding='utf8')
             handler_lg.setLevel(logging.DEBUG)
             handler_lg.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
@@ -38,7 +38,7 @@ def fastlog(name:str='Log',level:str='warn',out:str='debug.log',err:str=None,):
             __logger.addHandler(handler_pt)
 
         if err:
-            Archive().new(err,b=b'----'+name.encode('utf8')+b'.ERROR----\n')
+            Archive().new(err,b=b'----'+name.encode('utf8')+b'.ERROR----\n',save_old=save_old)
             handler_er=logging.FileHandler(filename=err,encoding='utf8')
             handler_er.setLevel(logging.ERROR)
             handler_er.setFormatter(logging.Formatter("%(asctime)s %(message)s"))
