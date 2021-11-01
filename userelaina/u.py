@@ -1,33 +1,29 @@
 '''
-`rd` `urlencode` `urldecode` `ua`
+`urlencode` `urldecode` `ua`
 
-`ua_my` `ua_fake`
+`slp` `dcp` `ua_fake`
 
-    >>> import re
-    >>> import time
-    >>> import requests
-    >>> from typing import Union
+    >>> import os,re,time,random,requests
     >>> from time import sleep as slp
     >>> from copy import deepcopy as dcp
+    >>> ua_fake={'':['',],}
 
-    >>> rd(x:all)->all
     >>> urlencode(s:all)->str
     >>> urldecode(s:all)->str
     >>> ua(k:str)->str
 '''
 
+import os
 import re
 import time
+import random
 import requests
-from typing import Union
-from time import sleep as slp
-from copy import deepcopy as dcp
 
-from userelaina._small import rd
+from userelaina._small import slp,dcp
 from userelaina._other import urlencode,urldecode
 
 def ua(k:str=None)->str:
-    return rd(ua_fake.get(k,ua_fake[rd(ua_fake)]))
+    return random.choice(ua_fake.get(k,ua_fake[random.choice(list(ua_fake))]))
 
 ua_fake={
     "chrome": [

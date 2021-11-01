@@ -5,16 +5,16 @@ import threading
 def getlock():
     return threading.Lock()
 
-lk=getlock()
+_lk=getlock()
 
 def lock(x=None,un:bool=False):
     if x is None:
-        x=lk
+        x=_lk
     return x.release() if un else x.acquire()
 
 def unlock(x=None):
     if x is None:
-        x=lk
+        x=_lk
     return x.release()
 
 def throws(f,args:tuple=tuple())->None:

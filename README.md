@@ -1,2 +1,4 @@
-# sugar
-syntax sugar
+## sugar
+
+`pip install userelaina`
+
