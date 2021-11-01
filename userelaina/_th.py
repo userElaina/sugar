@@ -2,6 +2,21 @@ import os
 import time
 import threading
 
+def getlock():
+    return threading.Lock()
+
+lk=getlock()
+
+def lock(x=None,un:bool=False):
+    if x is None:
+        x=lk
+    return x.release() if un else x.acquire()
+
+def unlock(x=None):
+    if x is None:
+        x=lk
+    return x.release()
+
 def throws(f,args:tuple=tuple())->None:
     if not f:
         f=args
@@ -20,6 +35,7 @@ def throws(f,args:tuple=tuple())->None:
     _t=threading.Thread(target=f,args=args,daemon=True)
     _t.start()
     return _t
+
 class nThread:
     def __init__(
         self,
@@ -105,13 +121,3 @@ class nThread:
         self.__mian.join()
         self.__ed=False
 
-def throws_ex(
-    n:int=None,
-    clk:float=0,
-    f=None,
-    l:list=list(),
-):
-    t=nThread(n=n,clk=clk,f=f)
-    t.extend(l)
-    t.start()
-    t.join()

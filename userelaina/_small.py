@@ -20,3 +20,11 @@ def find_args(x:str)->dict:
             for j in re.findall('[\S]+[\s]*=[\s]*[\S]+',x)
                 for i in re.sub('[\s]+','',j).split('=')
     }
+
+pwdchar='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~'
+def newpwd(n:int)->str:
+    return ''.join([random.choice(pwdchar) for i in range(n)])
+
+namechar='0123456789abcdefghijklmnopqrstuvwxyz'
+def newname(n:int)->str:
+    return ''.join([random.choice(namechar) for i in range(n)])
