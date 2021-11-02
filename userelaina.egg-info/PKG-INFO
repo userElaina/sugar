@@ -1,29 +1,12 @@
-Metadata-Version: 1.2
+Metadata-Version: 2.1
 Name: userelaina
-Version: 0.0.3
+Version: 0.0.4
 Summary: Syntax sugar.
-Home-page: https://github.com/userElaina
+Home-page: https://github.com/userelaina
 Author: userElaina
 Author-email: userElaina@google.com
 License: UNKNOWN
-Project-URL: Source, https://github.com/userelaina/sugar
-Description: userelaina - Syntax sugar
-        ====================================
-        
-        .. image:: https://img.shields.io/pypi/v/userelaina.svg
-           :target: https://pypi.org/project/userelaina/
-        
-        Syntax sugar for myself. 
-        
-        You can use pip to install packages from the `Python Package Index`_ and other indexes.
-        
-        * `GitHub page`_
-        * `Issue tracking`_
-        
-        .. _Python Package Index: https://pypi.org
-        .. _GitHub page: https://github.com/userelaina/sugar
-        .. _Issue tracking: https://github.com/userelaina/sugar/issues
-        
+Project-URL: Source, https://github.com/userElaina/sugar
 Keywords: userelaina
 Platform: UNKNOWN
 Classifier: License :: OSI Approved :: MIT License
@@ -33,3 +16,23 @@ Classifier: Programming Language :: Python :: 3.7
 Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3.9
 Requires-Python: >=3.6
+License-File: LICENSE
+
+userelaina - Syntax sugar
+====================================
+
+.. image:: https://img.shields.io/pypi/v/userelaina.svg
+   :target: https://pypi.org/project/userelaina/
+
+Syntax sugar for myself. 
+
+You can use pip to install packages from the `Python Package Index`_ and other indexes.
+
+* `GitHub page`_
+* `Issue tracking`_
+
+.. _Python Package Index: https://pypi.org
+.. _GitHub page: https://github.com/userElaina/sugar
+.. _Issue tracking: https://github.com/userElaina/sugar/issues
+
+
