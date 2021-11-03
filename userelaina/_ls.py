@@ -1,8 +1,9 @@
 import os
+import random
 from typing import Union
 from copy import deepcopy as dcp
 
-from userelaina._small import rd
+rd=lambda l:random.choice(list(l))
 
 exts={
     '':[''],
