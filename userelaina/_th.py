@@ -39,62 +39,71 @@ def throws(f,args:tuple=tuple())->None:
 class nThread:
     def __init__(
         self,
+        f:callable,
         n:int=None,
         clk:float=0,
-        f=None,
+        name:str='nThread',
     ):
-        self.__ed=False
+        self.__kill=False
+        self.__end=False
         self.__pause=False
         self.__q=list()
 
-        self.__n=n if isinstance(n,int) else os.cpu_count()
+        try:
+            n=int(n)
+            if n<0:
+                raise ValueError
+        except:
+            n=os.cpu_count()
+        self.__n=n
         self.__total=0
         self.__finish=0
 
         self.__f=f
-        self.__clk=clk 
-
+        self.clk=clk
+        self.name=name
 
     def __iter__(self):
         for i in self.__q.copy():
             yield i
 
     def __str__(self):
-        return '<class nThread with '+str(self.__n)+' threads>'
-    def __repr__(self):
-        return '<class nThread with '+str(self.__n)+' threads>'
-
-    def __del__(self):
-        print('del this nThread; '+str(self.__finish)+'/'+str(self.__total)+' threads are finished')
+        return '<%s with %d threads>'%(self.name,self.__n)
 
     def __always(self):
         _l=list()
         while True:
-            time.sleep(self.__clk)
+            time.sleep(self.clk)
 
+            if self.__kill:
+                return
+            if self.__end and not len(_l):
+                return
             if self.__pause:
                 continue
 
-            if self.__ed and not len(_l):
-                return
             for i in _l.copy():
                 if not i.is_alive():
                     _l.remove(i)
                     self.__finish+=1
-            while len(self.__q) and len(_l)<self.__n:
+            while self.__q and len(_l)<self.__n:
                 _l.append(throws(self.__f,self.__q.pop(0)))
 
     def get_queue(self)->list:
         return self.__q.copy()
 
     def get_info(self)->dict:
+        _total=self.__total
+        _finish=self.__finish
+        _wait=len(self.__q)
         _d={
-            'classname':'nThread',
-            'clock':self.__clk,
-            'total':self.__total,
-            'finished':self.__finish,
-            'limited':self.__n,
-            'waiting':len(self.__q),
+            'name':self.name,
+            'clock':self.clk,
+            'threads':self.__n,
+            'running':_total-_finish-_wait,
+            'total':_total,
+            'finished':_finish,
+            'waiting':_wait,
         }
         return _d
 
@@ -102,22 +111,27 @@ class nThread:
         self.__total+=1
         self.__q.append(args)
 
-    def extend(self,l:list):
+    def add(self,l:list):
+        _total=self.__total
         if isinstance(l,int):
-            l=list(range(l))
+            l=list(range(_total,_total+l))
         self.__total+=len(l)
         self.__q+=l
 
     def pause(self):
         self.__pause=~self.__pause
 
+    def autoexit(self):
+        self.__end=True
+
+    def exit(self):
+        self.autoexit()
+        time.sleep(self.__clk<<1)
+        self.__kill=True
+
     def start(self):
         self.__mian=throws(self.__always)
 
     def join(self):
-        while len(self.__q):
-            time.sleep(self.__clk*2)
-        self.__ed=True
+        self.autoexit()
         self.__mian.join()
-        self.__ed=False
-
